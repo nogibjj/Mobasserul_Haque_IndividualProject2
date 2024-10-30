@@ -17,32 +17,30 @@ jobs:
           profile: minimal
           components: clippy, rustfmt
           override: true
-    - name: update linux
+    - name: Update Linux
       run: sudo apt update 
-    - name: update Rust
+    - name: Install Rust Toolchain
       run: make install
-    - name: Check Rust versions
+    - name: Check Rust Versions
       run: make rust-version
-    - name: Format
+    - name: Format Code
       run: make format
-    - name: Lint
+    - name: Lint Code
       run: make lint
-    - name: Test
+    - name: Run Tests
       run: make test
-    - name: Insert
-      run: make insert 
-    - name: Update 
+    - name: Run Insert Query
+      run: make insert
+    - name: Run Update Query
       run: make update
-    - name: Read
+    - name: Run Read Query
       run: make read  
-    - name: Delete 
+    - name: Run Delete Query
       run: make delete
-    
-    
-    - name: Upload optimized Rust binary
+    - name: Build Optimized Rust Binary
+      run: make release
+    - name: Upload Optimized Rust Binary
       uses: actions/upload-artifact@v3
       with:
         name: rust-binary
         path: target/release/mobasserul_haque_individual_project2
-
-    
