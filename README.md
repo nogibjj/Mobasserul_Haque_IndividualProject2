@@ -1,107 +1,221 @@
-[![CI](https://github.com/nogibjj/Mobasserul_Haque_MiniProject5/actions/workflows/cicd.yml/badge.svg)](https://github.com/nogibjj/Mobasserul_Haque_MiniProject5/actions/workflows/cicd.yml)
+[![Rust CI/CD Pipeline](https://github.com/nogibjj/Mobasserul_Haque_IndividualProject2/actions/workflows/rust_cicd.yml/badge.svg)](https://github.com/nogibjj/Mobasserul_Haque_IndividualProject2/actions/workflows/rust_cicd.yml)
 
-# Airline Safety Database ETL and Query Tool
+# Individual Project #2: Rust CLI Binary with SQLite - Airline Safety Database ETL and Query Tool
 
-This project provides an ETL (Extract, Transform, Load) and querying tool for managing and analyzing the Airline Safety Database. It is built using Python and SQLite, enabling users to perform various operations on airline safety records, including extraction, loading, updating, deleting, creating, and querying records.
+This project is a Rust-based CLI application that provides an ETL (Extract, Transform, Load) and querying tool for managing and analyzing the Airline Safety Database. It supports various operations such as extracting airline safety data, loading it into an SQLite database, and performing CRUD (Create, Read, Update, Delete) operations using SQL queries.
 
 ## Features
 
-- **ETL Operations**: 
-  - Extract data from a source.
-  - Transform and load data into the SQLite database.
-  
-- **Query Operations**:
-  - Update existing records in the database.
-  - Delete records based on a unique identifier.
-  - Create new records in the database.
-  - Execute custom SQL queries.
-  - Read a limited number of records from the database.
+- **Extract**: Download airline safety data from a public source and save it locally as a CSV file.
+- **Transform and Load**: Process and load the CSV data into an SQLite database (`AirlineSafetyDB.db`).
+- **Query**: Perform SQL queries on the data for analysis and manipulation.
+- **CRUD Operations**:
+  - Insert new records into the database.
+  - Update existing records.
+  - Read and fetch data from the database.
+  - Delete specific records from the database.
 
-- **Logging and Output**:
-  - All executed queries are logged in a markdown file for reference.
-  - Query results are outputted in a formatted markdown file for easier readability.
 
 ## Directory Structure
 
 ```
-├── .devcontainer/
-│   ├── devcontainer.json
-│   └── Dockerfile
-├── .github/
-│   └── workflows/cicd.yml
-├── data/
-│   └── airline_safety.csv
-├── myLib/
-│   ├── __init__.py
-│   ├── __pycache__/
-│   ├── extract.py
-│   ├── query.py
-│   └── transform_load.py
-├── AirlineSafetyDB.db
-├── main.py
-├── Makefile
-├── query_log.md
-├── query_output.md
-├── README.md  
-├── ServeTimesDB.db  requirements.txt
-└── test_main.py
+.
+├── .devcontainer
+│   ├── devcontainer.json       
+│   ├── Dockerfile              
+├── .github
+│   └── workflows
+│       └── rust_cicd.yml       
+├── data
+│   └── airline-safety.csv      
+├── src
+│   ├── lib.rs                  
+│   └── main.rs                 
+├── target                      
+├── tests
+│   └── tests.rs                
+├── .coverage                   
+├── .gitignore                  
+├── AirlineSafetyDB.db          
+├── Cargo.lock                  
+├── Cargo.toml                  
+├── Makefile                    
+├── query_output.md             
+├── rust_query_log.md           
+├── README.md                   
+├── Rust_Build.PNG              
+├── Rust_Delete.PNG             
+├── Rust_Insert.PNG             
+├── Rust_Load.PNG               
+├── Rust_Read.PNG               
+├── Rust_Update.PNG             
+
 ```
-## CRUD operations : 
+## Arguments
+
+The application supports the following arguments for interacting with the database:
+- `record_id`: The unique identifier for a record.
+- `airline`: The name of the airline.
+- `avail_seat_km_per_week`: Available seat kilometers per week for the airline.
+- `incidents_85_99`: Number of incidents from 1985 to 1999.
+- `fatal_accidents_85_99`: Number of fatal accidents from 1985 to 1999.
+- `fatalities_85_99`: Number of fatalities from 1985 to 1999.
+- `incidents_00_14`: Number of incidents from 2000 to 2014.
+- `fatal_accidents_00_14`: Number of fatal accidents from 2000 to 2014.
+- `fatalities_00_14`: Number of fatalities from 2000 to 2014.
+
+## Installation
+
+### Prerequisites
+- **Rust programming language** and **Cargo package manager**.
+- **SQLite** installed on your system.
+
+## Build the Project
+
+To build the project, run:
+
+```bash
+cargo build
+```
+![Rust_Build](Rust_Build.PNG)
 
 ## Usage
 
-Run the script using the following command:
+### Available Commands
 
-```python
-python main.py <action> [arguments]
+#### Extract Data
+```bash
+cargo run -- extract
 ```
-## Arguments: 
+This will download the `airline-safety.csv` file to the `data` directory.
+![Cargo_extract](Cargo_extract.PNG)
 
-`record_id`, `airline`, `avail_seat_km_per_week`, `incidents_85_99`, `fatal_accidents_85_99`, `fatalities_85_99`, `incidents_00_14`, `fatal_accidents_00_14`, `fatalities_00_14`
-
-## Actions:
-
-extract: Extract data from the source.
-
-```python
-python main.py extract
+#### Load Data
+```bash
+cargo run -- load
 ```
-transform_load: Transform and load data into the database.
+This will load the `airline-safety.csv` data into the SQLite database (`AirlineSafetyDB.db`).
+![Cargo_load](Cargo_load.PNG)
 
-```python
-python main.py transform_load
+### Run Queries: 
+
+Use the `query` command to perform SQL operations on the database.
+
+- **Read Data:**
+  ```bash
+  cargo run -- query "SELECT * FROM AirlineSafety LIMIT 10;"
+  ```
+![Rust_Read](Rust_Read.PNG)
+
+- **Insert Data:**
+  ```bash
+  cargo run -- query "INSERT INTO AirlineSafety (airline, avail_seat_km_per_week, incidents_85_99, fatal_accidents_85_99, fatalities_85_99, incidents_00_14, fatal_accidents_00_14, fatalities_00_14) VALUES ('New Airline', 1000000, 2, 0, 0, 1, 0, 0);"
+  ```
+![Rust_Insert](Rust_Insert.PNG)
+
+- **Update Data:**
+  ```bash
+  cargo run -- query "UPDATE AirlineSafety SET airline = 'Updated Airline A', avail_seat_km_per_week = 600000, incidents_85_99 = 3, fatal_accidents_85_99 = 0, fatalities_85_99 = 1, incidents_00_14 = 0, fatal_accidents_00_14 = 1, fatalities_00_14 = 0 WHERE id = 1;"
+  ```
+![Rust_Update](Rust_Update.PNG)
+
+- **Delete Data:**
+  ```bash
+  cargo run -- query "DELETE FROM AirlineSafety WHERE id = 2;"
+  ```
+![Rust_Delete](Rust_Delete.PNG)
+
+#### Run Tests
+```bash
+cargo test
 ```
-update_record: Update an existing record in the database.
-
-```python
-python main.py update_record(1, "Air Canada", 2000000000, 3, 1, 5, 2, 0, 0)
+#### Build Optimized Binary
+```bash
+cargo build --release
 ```
-create_record: Create a new record in the database
+## Use of GitHub Copilot and Other LLMs
 
-```python
-python main.py create_record("Air Canada", 1865253802, 2, 0, 0, 2, 0, 0)
-```
-delete_record: delete an existing record in the database.
+GitHub Copilot was utilized extensively during the development of this project to:
+- Suggest boilerplate code for repetitive tasks, such as SQL query templates and Rust function signatures.
+- Provide intelligent code suggestions for Rust-specific features, including error handling with `Result` and using crates like `rusqlite` and `reqwest`.
+- Generate utility functions, such as logging SQL queries to a Markdown file, and handling edge cases in CSV processing.
 
-```python
-python main.py delete_record(1)
-```
-read_data: Read and display the top N rows from the database.
+LLM models were used to:
+- Debug errors during the development process, such as SQL syntax issues and Rust-specific compiler errors.
+- Optimize and refactor Rust code to improve readability and performance.
+- Generate the initial structure for files like the `Makefile` and `GitHub Actions` workflows.
+- Provide guidance on integrating unit tests (`tests.rs`) with Rust's testing framework.
+- Clarify complex concepts related to Rust features, such as ownership, lifetimes, and trait implementations.
 
-```python
-python main.py read_data(10)  # Reads the top 10 rows
-```
-general_query: Run a custom SQL query on the database.
+By leveraging these tools, the development process became more efficient, allowing for faster iteration and better error resolution.
 
-```python
-python main.py "SELECT * FROM AirlineSafety WHERE airline = 'Aeroflot*'"
-```
+## CI/CD Workflow
 
-## Testing
-To run the test suite, use:
+This project includes a GitHub Actions pipeline defined in `rust_cicd.yml`. The workflow:
 
-```python
-python -m pytest -vv --cov=main --cov=myLib test_*.py
-```
-## References 
-https://github.com/nogibjj/sqlite-lab
+- Checks out the repository.
+- Installs and updates the Rust toolchain.
+- Formats, lints, tests, and runs the project.
+- Builds an optimized binary in release mode.
+- Uploads the optimized binary as an artifact.
+
+You can trigger the workflow by pushing changes or creating a pull request to the `main` branch.
+
+### Makefile: 
+
+The `Makefile` simplifies common operations:
+
+- **Format Code:**
+  ```bash
+  make format
+  ```
+
+- **Lint Code:**
+  ```bash
+  make lint
+  ```
+
+- **Run Tests:**
+  ```bash
+  make test
+  ```
+
+- **Build and Run:**
+  ```bash
+  make all
+  ```
+
+### Makefile: 
+
+The `Makefile` simplifies common operations:
+
+- **Format Code:**
+  ```bash
+  make format
+  ```
+
+- **Lint Code:**
+  ```bash
+  make lint
+  ```
+
+- **Run Tests:**
+  ```bash
+  make test
+  ```
+
+- **Build and Run:**
+  ```bash
+  make all
+  ```
+
+### Optimized Rust Binary
+
+The binary file for this project can be accessed here: https://github.com/nogibjj/Mobasserul_Haque_IndividualProject2/actions/runs/12252756097/artifacts/2298606566
+  
+
+
+
+
+
+

@@ -3,4 +3,4 @@
 # Rust metadata
 Cargo.lock
 
-__pycache__
+/__pycache__/
