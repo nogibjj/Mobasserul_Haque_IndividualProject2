@@ -36,7 +36,7 @@ fn test_load() {
 
 #[test]
 fn test_create_record() {
-    let query = "INSERT INTO AirlineSafety (
+    let query_str = "INSERT INTO AirlineSafety (
         airline, avail_seat_km_per_week, incidents_85_99, fatal_accidents_85_99, fatalities_85_99,
         incidents_00_14, fatal_accidents_00_14, fatalities_00_14
     ) VALUES (
@@ -44,7 +44,7 @@ fn test_create_record() {
     );";
 
     // Run the query
-    let result = query(query);
+    let result = query(query_str);
 
     // Assert the query executed successfully
     assert!(
@@ -56,10 +56,10 @@ fn test_create_record() {
 
 #[test]
 fn test_query() {
-    let query = "SELECT * FROM AirlineSafety WHERE airline = 'Aeroflot*';";
+    let query_str = "SELECT * FROM AirlineSafety WHERE airline = 'Aeroflot*';";
 
     // Run the query
-    let result = query(query);
+    let result = query(query_str);
 
     // Assert the query executed successfully
     assert!(
@@ -71,10 +71,10 @@ fn test_query() {
 
 #[test]
 fn test_read_data() {
-    let query = "SELECT * FROM AirlineSafety LIMIT 10;";
+    let query_str = "SELECT * FROM AirlineSafety LIMIT 10;";
 
     // Run the query
-    let result = query(query);
+    let result = query(query_str);
 
     // Assert the query executed successfully
     assert!(
