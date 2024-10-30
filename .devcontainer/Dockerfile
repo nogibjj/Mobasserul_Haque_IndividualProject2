@@ -1,18 +1,25 @@
-# See here for image contents: https://github.com/microsoft/vscode-dev-containers/tree/v0.245.2/containers/codespaces-linux/.devcontainer/base.Dockerfile
+# Start with a Rust image
+FROM rust:1.70-slim-buster
 
-FROM mcr.microsoft.com/vscode/devcontainers/universal:2-focal
+# Install necessary tools
+RUN apt-get update && \
+    apt-get install -y sqlite3 libsqlite3-dev && \
+    rustup default stable
 
-# [Optional] Uncomment this section to install additional OS packages.
-# RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-#     && apt-get -y install --no-install-recommends <your-package-list-here>
-RUN apt-get update && apt-get -y install --no-install-recommends \
-   python3.8-venv \
-   gcc 
-   
-ARG USER="codespace"
-ARG VENV_PATH="/home/${USER}/venv"
-COPY requirements.txt /tmp/
-COPY Makefile /tmp/
-RUN su $USER -c "/usr/bin/python3 -m venv /home/${USER}/venv" \
-   && su $USER -c "${VENV_PATH}/bin/pip --disable-pip-version-check --no-cache-dir install -r /tmp/requirements.txt" \
-   && rm -rf /tmp/requirements.txt
+# Set the working directory
+WORKDIR /workspace
+
+# Copy only the necessary files first to cache dependencies efficiently
+COPY Cargo.toml Cargo.lock ./
+
+# Build dependencies to speed up rebuilds
+RUN cargo fetch
+
+# Copy the rest of the project files
+COPY . .
+
+# Build the Rust project in release mode
+RUN cargo build --release
+
+# Run the CLI binary by default
+CMD ["./target/release/mobasserul_haque_individual_project2"]

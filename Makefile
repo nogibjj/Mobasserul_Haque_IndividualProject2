@@ -1,34 +1,48 @@
-install:
-	pip install --upgrade pip && pip install -r requirements.txt
+rust-version:
+	@echo "Rust command-line utility versions:"
+	rustc --version 			#rust compiler
+	cargo --version 			#rust package manager
+	rustfmt --version			#rust code formatter
+	rustup --version			#rust toolchain manager
+	clippy-driver --version		#rust linter
 
 format:
-	black *.py
-	
+	cargo fmt --quiet
+
+install:
+	# Install if needed
+	#@echo "Updating rust toolchain"
+	#rustup update stable
+	#rustup default stable 
+
 lint:
-	ruff check *.py
+	cargo clippy --quiet
 
 test:
-	python -m pytest -vv --cov=main --cov=myLib test_*.py	
+	cargo test --quiet
 
-all: install format lint test
+run:
+	cargo run
 
-generate_and_push:
-	# Create the markdown file 
-	python test_main.py  
+release:
+	cargo build --release
 
-	# Add, commit, and push the generated files to GitHub
-	@if [ -n "$$(git status --porcelain)" ]; then \
-		git config --local user.email "action@github.com"; \
-		git config --local user.name "GitHub Action"; \
-		git add .; \
-		git commit -m "Add SQL log as query_output.md"; \
-		git push; \
-	else \
-		echo "No changes to commit. Skipping commit and push."; \
-	fi
+all: format lint test run
 
-extract:
-	python main.py extract
+extract: 
+	cargo run extract
 
-load: 
-	python main.py transform_load	
+load:
+	cargo run load
+# Read 
+read:
+	cargo run -- query "SELECT * FROM AirlineSafety LIMIT 10;"
+# Delete
+delete:
+	cargo run -- query "DELETE FROM AirlineSafety WHERE id = 1;"  
+# Insert
+insert:
+	cargo run -- query "INSERT INTO AirlineSafety (airline, avail_seat_km_per_week, incidents_85_99, fatal_accidents_85_99, fatalities_85_99, incidents_00_14, fatal_accidents_00_14, fatalities_00_14) VALUES ('Air Canada', 1865253802, 2, 0, 0, 2, 0, 0);"
+# Update
+update:
+	cargo run -- query "UPDATE AirlineSafety SET airline = 'Air Canada', avail_seat_km_per_week = 2000000000, incidents_85_99 = 3, fatal_accidents_85_99 = 1, fatalities_85_99 = 5, incidents_00_14 = 2, fatal_accidents_00_14 = 0, fatalities_00_14 = 0 WHERE id = 1;"
