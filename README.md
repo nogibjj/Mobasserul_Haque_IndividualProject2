@@ -15,6 +15,9 @@ This project is a Rust-based CLI application that provides an ETL (Extract, Tran
   - Read and fetch data from the database.
   - Delete specific records from the database.
 
+## Video demo
+
+[Video_Demo_Walkthrough](Video_Demo_Walkthrough.mp4)
 
 ## Directory Structure
 
